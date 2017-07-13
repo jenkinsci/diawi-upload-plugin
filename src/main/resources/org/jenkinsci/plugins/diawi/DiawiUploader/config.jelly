@@ -1,10 +1,19 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-<f:entry title="Token" field="token">
-    <f:textbox />
+<f:entry title="Token" help="Diawi.com API access token">
+    <f:password field="token"/>
   </f:entry>
-  <f:entry title="FileName" field="fileName">
-                <f:textbox />
+  <f:entry title="Proxy Host" help="Leave blank if you don't use a proxy">
+      <f:textbox field="proxyHost" />
+    </f:entry>
+  <f:entry title="Proxy Port" help="Used only if proxy Host is defined">
+      <f:textbox field="proxyPort"/>
+    </f:entry>
+  <f:entry title="Proxy Protocol" help="Used only if proxy Host is defined" >
+      <f:textbox field="proxyProtocol"/>
+    </f:entry>
+  <f:entry title="File Name" >
+                <f:textbox field="fileName"/>
               </f:entry>
 
 </j:jelly>

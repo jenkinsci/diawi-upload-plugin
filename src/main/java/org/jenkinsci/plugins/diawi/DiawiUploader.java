@@ -24,29 +24,59 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
 
     private String token;
     private String fileName;
+    private String proxyHost;
+    private int proxyPort=8080;
+    private String proxyProtocol="http";
 
     @DataBoundConstructor
-    public DiawiUploader(String token,String fileName)
+    public DiawiUploader(String token,String fileName, String proxyHost, int proxyPort, String proxyProtocol)
     {
         this.token=token;
         this.fileName=fileName;
-    }
-    public String getToken()
-    {
-        return this.token;
+        this.proxyHost=proxyHost;
+        this.proxyPort=proxyPort;
+        this.proxyProtocol=proxyProtocol;
     }
     public void setToken(String value)
     {
         this.token=value;
     }
+    public void setFileName(String value)
+    {
+        this.fileName=value;
+    }
+    public void setProxyHost(String value)
+    {
+        this.proxyHost=value;
+    }
+    public void setProxyPort(int value)
+    {
+        this.proxyPort=value;
+    }
+    public void setProxyProtocol(String value)
+    {
+        this.proxyProtocol=value;
+    }
 
+    public String getToken()
+    {
+        return this.token;
+    }
     public String getFileName()
     {
         return this.fileName;
     }
-    public void setFileName(String value)
+    public String getProxyHost()
     {
-       this.fileName=value;
+        return this.proxyHost;
+    }
+    public int getProxyPort()
+    {
+        return this.proxyPort;
+    }
+    public String getProxyProtocol()
+    {
+        return this.proxyProtocol;
     }
 
 
@@ -55,15 +85,24 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
 
         try {
-            listener.getLogger().println(fileName+" is being uploaded ... ");
 
-            DiawiRequest dr = new DiawiRequest(token);
+            DiawiRequest dr = new DiawiRequest(token,proxyHost,proxyPort,proxyProtocol);
 
-            DiawiRequest.DiawiJob job= dr.sendReq(fileName);
+            String path=workspace.child(fileName).toURI().getPath();
+            listener.getLogger().println(path+" is being uploaded ... ");
+
+            DiawiRequest.DiawiJob job= dr.sendReq(path);
+
+            if(job==null)
+                System.out.println(job);
             listener.getLogger().println("upload job is "+job.job);
 
 
-            DiawiRequest.DiawiJobStatus S = job.getStatus(token);
+            listener.getLogger().println("used proxy host is "+proxyHost);
+            listener.getLogger().println("used proxy port is "+proxyPort);
+            listener.getLogger().println("used proxy protocol is "+proxyProtocol);
+
+            DiawiRequest.DiawiJobStatus S = job.getStatus(token,proxyHost,proxyPort,proxyProtocol);
 
             int max_trials=30;
             int i=0;
@@ -71,7 +110,7 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
             while (S.status ==2001 && i<max_trials)
             {
                 System.out.println("trying again");
-                S = job.getStatus(token);
+                S = job.getStatus(token,proxyHost,proxyPort,proxyProtocol);
                 i++;
             }
 
@@ -80,7 +119,7 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
             listener.getLogger().println("message "+S.message);
 
 
-            listener.getLogger().println(fileName+" have been uploaded successfully to diawi ... ");
+            listener.getLogger().println(path+" have been uploaded successfully to diawi ... ");
 
 
             if (S.status==2001)
@@ -91,7 +130,7 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
                 throw new Exception("Unknown error. Upload failed");
 
 
-            listener.getLogger().println("has "+S.hash);
+            listener.getLogger().println("hash "+S.hash);
             listener.getLogger().println("link "+S.link);
 
 
