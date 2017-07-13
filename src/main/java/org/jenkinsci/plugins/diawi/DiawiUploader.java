@@ -93,8 +93,6 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
 
             DiawiRequest.DiawiJob job= dr.sendReq(path);
 
-            if(job==null)
-                System.out.println(job);
             listener.getLogger().println("upload job is "+job.job);
 
 
