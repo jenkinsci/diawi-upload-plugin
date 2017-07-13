@@ -12,7 +12,7 @@
   <f:entry title="Proxy Protocol" help="Used only if proxy Host is defined" >
       <f:textbox field="proxyProtocol"/>
     </f:entry>
-  <f:entry title="File Name" >
+  <f:entry title="File Name" help="Path to file relative to the workspace dir">
                 <f:textbox field="fileName"/>
               </f:entry>
 
