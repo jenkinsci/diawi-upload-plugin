@@ -18,6 +18,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
@@ -153,12 +154,12 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
     public static void writelink(String filename, String content) {
 
         BufferedWriter bw = null;
-        FileWriter fw = null;
+        OutputStreamWriter fw = null;
 
         try {
 
 
-            fw = new FileWriter(filename);
+            fw = new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8);
             bw = new BufferedWriter(fw);
             bw.write(content);
 
