@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+<f:entry title="Token">
+    <f:password field="token"/>
+  </f:entry>
+  <f:entry title="Proxy Host" >
+      <f:textbox field="proxyHost" />
+    </f:entry>
+  <f:entry title="Proxy Port" >
+      <f:textbox field="proxyPort"/>
+    </f:entry>
+  <f:entry title="Proxy Protocol"  >
+      <f:textbox field="proxyProtocol"/>
+    </f:entry>
+  <f:entry title="File Name" >
+                <f:textbox field="fileName"/>
+              </f:entry>
+
+</j:jelly>
