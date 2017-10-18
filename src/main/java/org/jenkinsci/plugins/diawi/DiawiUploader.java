@@ -87,8 +87,10 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
 
+        for ( String file : fileName.split(","))
         try {
 
+            file = file.trim();
             DiawiRequest dr = new DiawiRequest(token,proxyHost,proxyPort,proxyProtocol);
 
             String path=workspace.child(fileName).toURI().getPath();

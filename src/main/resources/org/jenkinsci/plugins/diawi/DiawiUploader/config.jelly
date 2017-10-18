@@ -13,7 +13,7 @@
   <f:entry title="Proxy Protocol"  >
       <f:textbox field="proxyProtocol"/>
     </f:entry>
-  <f:entry title="File Name" >
+  <f:entry title="File(s)" >
                 <f:textbox field="fileName"/>
               </f:entry>
 
