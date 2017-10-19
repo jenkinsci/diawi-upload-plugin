@@ -87,67 +87,64 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath workspace, @Nonnull Launcher launcher, @Nonnull TaskListener listener) throws InterruptedException, IOException {
 
-        for ( String file : fileName.split(","))
-        try {
+        for ( String file : fileName.split(",")) {
+            try {
 
-            file = file.trim();
-            DiawiRequest dr = new DiawiRequest(token,proxyHost,proxyPort,proxyProtocol);
+                file = file.trim();
+                DiawiRequest dr = new DiawiRequest(token, proxyHost, proxyPort, proxyProtocol);
 
-            String path=workspace.child(fileName).toURI().getPath();
-            listener.getLogger().println(path+" is being uploaded ... ");
+                String path = workspace.child(file).toURI().getPath();
+                listener.getLogger().println(path + " is being uploaded ... ");
 
-            DiawiRequest.DiawiJob job= dr.sendReq(path);
+                DiawiRequest.DiawiJob job = dr.sendReq(path);
 
-            listener.getLogger().println("upload job is "+job.job);
+                listener.getLogger().println("upload job is " + job.job);
 
 
-            listener.getLogger().println("used proxy host is "+proxyHost);
-            listener.getLogger().println("used proxy port is "+proxyPort);
-            listener.getLogger().println("used proxy protocol is "+proxyProtocol);
+                listener.getLogger().println("used proxy host is " + proxyHost);
+                listener.getLogger().println("used proxy port is " + proxyPort);
+                listener.getLogger().println("used proxy protocol is " + proxyProtocol);
 
-            DiawiRequest.DiawiJobStatus S = job.getStatus(token,proxyHost,proxyPort,proxyProtocol);
+                DiawiRequest.DiawiJobStatus S = job.getStatus(token, proxyHost, proxyPort, proxyProtocol);
 
-            int max_trials=30;
-            int i=0;
+                int max_trials = 30;
+                int i = 0;
 
-            while (S.status ==2001 && i<max_trials)
-            {
-                System.out.println("trying again");
-                S = job.getStatus(token,proxyHost,proxyPort,proxyProtocol);
-                i++;
+                while (S.status == 2001 && i < max_trials) {
+                    System.out.println("trying again");
+                    S = job.getStatus(token, proxyHost, proxyPort, proxyProtocol);
+                    i++;
+                }
+
+
+                listener.getLogger().println("status " + S.status);
+                listener.getLogger().println("message " + S.message);
+
+
+                listener.getLogger().println(path + " have been uploaded successfully to diawi ... ");
+
+
+                if (S.status == 2001)
+                    throw new Exception("Looks like upload job hanged. please login to Diawi.com and check the uplaod status");
+                else if (S.status == 4000)
+                    throw new Exception("Upload Failed, looks like you chose the wrong file");
+                else if (S.status != 2000)
+                    throw new Exception("Unknown error. Upload failed");
+
+
+                listener.getLogger().println("hash " + S.hash);
+                listener.getLogger().println("link " + S.link);
+
+
+                String saveLinkTo = workspace.toURI().getPath();
+                writelink(saveLinkTo + "/" + file + ".diawilink", S.link);
+
+
+            } catch (Exception e) {
+                listener.getLogger().print(e.getMessage());
+                e.printStackTrace();
+                throw new AbortException(e.getMessage());
             }
-
-
-            listener.getLogger().println("status "+S.status);
-            listener.getLogger().println("message "+S.message);
-
-
-            listener.getLogger().println(path+" have been uploaded successfully to diawi ... ");
-
-
-            if (S.status==2001)
-                throw new Exception("Looks like upload job hanged. please login to Diawi.com and check the uplaod status");
-            else if (S.status==4000)
-                throw new Exception("Upload Failed, looks like you chose the wrong file");
-            else if (S.status !=2000)
-                throw new Exception("Unknown error. Upload failed");
-
-
-            listener.getLogger().println("hash "+S.hash);
-            listener.getLogger().println("link "+S.link);
-
-
-
-            String saveLinkTo=workspace.toURI().getPath();
-            writelink(saveLinkTo+"/DIAWI_LINKS",S.link);
-
-
-        }
-        catch (Exception e)
-        {
-            listener.getLogger().print(e.getMessage());
-            e.printStackTrace();
-            throw new AbortException(e.getMessage());
         }
 
     }
