@@ -27,6 +27,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.*;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 public class DiawiRequest {
 
