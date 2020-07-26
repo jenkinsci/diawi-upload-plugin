@@ -21,6 +21,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
+import java.nio.charset.Charset;
 
 /**
  * Created by salaheld on 17/06/2017.
@@ -41,12 +42,12 @@ public class DiawiUploader
     String proxyHost,
     int proxyPort,
     String proxyProtocol
-  ) {
+  ) throws UnsupportedEncodingException {
     //byte[] decodedBytes = Base64.getDecoder().decode(token);
     //this.token = new String(decodedBytes);
 
-    byte[] valueDecoded = Base64.decodeBase64(token.getBytes());
-    this.token = new String(valueDecoded);
+    byte[] valueDecoded = Base64.decodeBase64(token.getBytes(Charset.forName("UTF-8")));
+    this.token = new String(valueDecoded,"UTF-8");
 
     //this.token=token;
     this.fileName = fileName;
