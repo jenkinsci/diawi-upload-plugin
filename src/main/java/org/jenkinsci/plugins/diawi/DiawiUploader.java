@@ -20,7 +20,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Base64;
+//import java.util.Base64;
+import org.apache.commons.codec.binary.Base64;
+
 
 /**
  * Created by salaheld on 17/06/2017.
@@ -37,8 +39,12 @@ public class DiawiUploader extends hudson.tasks.Builder implements SimpleBuildSt
     public DiawiUploader(String token,String fileName, String proxyHost, int proxyPort, String proxyProtocol)
     {
         
-        byte[] decodedBytes = Base64.getDecoder().decode(token);
-        this.token = new String(decodedBytes);
+        //byte[] decodedBytes = Base64.getDecoder().decode(token);
+        //this.token = new String(decodedBytes);
+
+        byte[] valueDecoded = Base64.decodeBase64(token.getBytes());
+        this.token = new String(valueDecoded);
+
         //this.token=token;
         this.fileName=fileName;
         this.proxyHost=proxyHost;
